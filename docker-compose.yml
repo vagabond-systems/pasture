@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+    trail:
+        image: josiahdc/trail:latest
+        privileged: true
+        ports:
+            -   target: 33700
+                published: 33700
+            -   target: 33710
+                published: 33710
