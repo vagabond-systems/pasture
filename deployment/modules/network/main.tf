@@ -50,3 +50,19 @@ resource "google_compute_firewall" "ssh_ingress" {
   ]
   source_ranges = ["0.0.0.0/0"]
 }
+
+resource "google_compute_firewall" "trail" {
+  name        = "${var.campaign}-trail"
+  network     = google_compute_network.network.name
+  allow {
+    protocol = "tcp"
+    ports    = [
+      "33700",
+      "33710"
+    ]
+  }
+  target_tags = [
+    "trail"
+  ]
+  source_ranges = ["0.0.0.0/0"]
+}

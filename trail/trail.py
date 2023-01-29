@@ -15,10 +15,10 @@ class Trail:
         self.auth_path = "/trail/openvpn/auth"
         self.reflector_url = "https://api.ipify.org?format=json"
         self.overhill_address = self.collect_overhill_address()
-        self.connect_openvpn()
-        self.force_cloudflare_dns()
+        # self.connect_openvpn()
+        # self.force_cloudflare_dns()
         self.start_proxy()
-        self.confirm_connection()
+        # self.confirm_connection()
 
         # prep flask
         self.flask_app = Flask("trail")

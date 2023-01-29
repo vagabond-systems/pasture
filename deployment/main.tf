@@ -37,6 +37,7 @@ module "trail" {
   instance_type     = "e2-small"
   private_ip        = "10.33.33.100"
   atlas_tags        = [
-    "ssh-ingress"
+    "ssh-ingress",
+    "trail"
   ]
 }
