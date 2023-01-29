@@ -1,0 +1,9 @@
+venv/
+trail/openvpn/*
+
+# terraform
+deployment/.terraform
+deployment/.terraform.lock.hcl
+deployment/terraform.tfstate
+deployment/terraform.tfstate.backup
+deployment/src.zip
