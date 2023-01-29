@@ -17,10 +17,10 @@ COPY tinyproxy.conf /etc/tinyproxy/tinyproxy.conf
 # configure openvpn
 COPY openvpn ./openvpn
 
-# (~) might come in handy maybe?
+## (~) might come in handy maybe?
 ## copy in update-resolv-conf
 ## needed by at least proton
-#RUN apk add openresolv
+#RUN apt -y install openresolv
 #RUN mkdir -p /etc/openvpn/
 #COPY update-resolv-conf.sh /etc/openvpn/update-resolv-conf
 #RUN chmod 777 /etc/openvpn/update-resolv-conf

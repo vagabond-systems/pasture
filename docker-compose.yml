@@ -9,3 +9,4 @@ services:
                 published: 33700
             -   target: 33710
                 published: 33710
+        restart: always
