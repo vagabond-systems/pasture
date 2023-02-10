@@ -4,6 +4,7 @@ services:
     trail:
         image: josiahdc/trail:latest
         privileged: true
+        build: ./trail
         ports:
             -   target: 33700
                 published: 33700

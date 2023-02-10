@@ -1,8 +1,21 @@
 FROM ubuntu:22.04
 
 RUN apt -y update
-RUN apt -y install bash curl vim htop git python3-dev pip python3-pip
-WORKDIR /trail
+RUN apt -y install \
+    bash \
+    git \
+    vim \
+    python3-dev \
+    python3-pip \
+    curl \
+    htop \
+    unzip \
+    nmap \
+    systemctl \
+    sudo
+
+
+WORKDIR /bough
 
 # configure openvpn
 RUN apt -y install openvpn
