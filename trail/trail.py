@@ -11,11 +11,11 @@ MAX_ATTEMPTS = 7
 class Trail:
     def __init__(self):
         logger.info("( ) initializing trail")
-        self.config_path = "/trail/openvpn/config"
-        self.auth_path = "/trail/openvpn/auth"
+        self.config_path = "/bough/openvpn/config"
+        self.auth_path = "/bough/openvpn/auth"
         self.reflector_url = "https://api.ipify.org?format=json"
         self.overhill_address = self.collect_overhill_address()
-        # self.connect_openvpn()
+        self.connect_openvpn()
         # self.force_cloudflare_dns()
         self.start_proxy()
         # self.confirm_connection()
