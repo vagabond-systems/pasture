@@ -16,9 +16,9 @@ class Trail:
         self.reflector_url = "https://api.ipify.org?format=json"
         self.overhill_address = self.collect_overhill_address()
         self.connect_openvpn()
-        # self.force_cloudflare_dns()
+        self.force_cloudflare_dns()
         self.start_proxy()
-        # self.confirm_connection()
+        self.confirm_connection()
 
         # prep flask
         self.flask_app = Flask("trail")
@@ -72,7 +72,7 @@ class Trail:
             except Exception as error:
                 pass
         if current_attempts >= MAX_ATTEMPTS:
-            raise Exception("Underhill address comparison failed too many times")
+            raise Exception("Could not verify ipv4 address had changed (~) check vpn")
         logger.info(f"(*) confirmed disguise: {self.overhill_address} -> {underhill_address}")
 
     def shell_exec(self, command):
