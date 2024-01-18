@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
     trail:
-        image: josiahdc/trail
+        image: josiahdc/trail:0.21
         build: ./trail
         ports:
             -   target: 3128
