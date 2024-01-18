@@ -2,10 +2,9 @@ version: "3.9"
 
 services:
     trail:
-        image: ubuntu/squid:5.2-22.04_beta
+        image: josiahdc/trail
+        build: ./trail
         ports:
             -   target: 3128
                 published: 3128
         restart: always
-        environment:
-            - TZ=UTC
