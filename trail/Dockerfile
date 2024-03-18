@@ -23,12 +23,18 @@ RUN apt -y install squid
 COPY squid.conf /etc/squid/squid.conf
 RUN systemctl enable squid
 
+# configure openvpn
+RUN apt -y install openvpn openresolv
+COPY ./openvpn/configs /etc/openvpn/configs
+COPY ./openvpn/login.conf /etc/openvpn/
+COPY ./openvpn/resolv.conf /etc/openvpn/
+
 # install requirements
 COPY ./requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# grab source
-COPY ./src ./src
-COPY ./bootstrapper.sh ./bootstrapper.sh
+# grab scripts
+COPY ./scripts ./scripts
+RUN chmod -R +x ./scripts
 
-CMD ./bootstrapper.sh
+CMD ./scripts/bootstrapper.sh

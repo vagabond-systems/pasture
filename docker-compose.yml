@@ -8,3 +8,4 @@ services:
             -   target: 3128
                 published: 3128
         restart: always
+        privileged: true
