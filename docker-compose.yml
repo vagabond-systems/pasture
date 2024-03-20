@@ -1,11 +1,22 @@
 version: "3.9"
 
 services:
-    trail:
-        image: josiahdc/trail:0.24
-        build: ./trail
-        ports:
-            -   target: 3128
-                published: 3128
-        restart: always
-        privileged: true
+  trailhead:
+    image: josiahdc/trailhead:0.35
+    build: ./trailhead
+    restart: always
+    ports:
+      - target: 33033
+        published: 33033
+
+  switchback:
+    image: josiahdc/switchback:0.35
+    build: ./switchback
+    restart: always
+    network_mode: "service:zenith"
+
+  zenith:
+    image: josiahdc/zenith:0.35
+    build: ./zenith
+    restart: always
+    privileged: true

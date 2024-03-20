@@ -1,6 +1,6 @@
 .idea/
 venv/
-trail/openvpn/login.conf
+zenith/openvpn/login.conf
 
 # terraform
 deployment/.terraform
