@@ -1,8 +1,8 @@
 import requests
 
 proxy_settings = {
-    "http": "http://0.0.0.0:33033",
-    "https": "http://0.0.0.0:33033",
+    "http": "http://0.0.0.0:33300",
+    "https": "http://0.0.0.0:33300",
 }
 unproxied_response = requests.get("http://www.icanhazip.com")
 proxied_response = requests.get("http://www.icanhazip.com", proxies=proxy_settings)
