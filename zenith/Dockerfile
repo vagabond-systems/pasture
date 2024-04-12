@@ -9,9 +9,8 @@ RUN apt -y install \
     vim \
     curl \
     systemctl \
-    sudo \
-    python3-dev \
-    python3-pip
+    sudo
+
 
 WORKDIR /app
 
@@ -19,10 +18,6 @@ WORKDIR /app
 RUN apt -y install openvpn openresolv
 COPY ./openvpn/configs /etc/openvpn/configs
 COPY ./openvpn/login.conf /etc/openvpn/
-
-# install requirements
-COPY ./requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
 
 # grab scripts
 COPY ./scripts ./scripts
