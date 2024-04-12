@@ -3,8 +3,8 @@
 NO_CACHE=false
 
 declare -a PLATFORMS=(
-     "linux/amd64"
-     "linux/arm64/v8"
+    "linux/amd64"
+    #     "linux/arm64/v8"
 )
 
 if [ "$NO_CACHE" = true ]; then
@@ -20,9 +20,9 @@ fi
 } <version.txt
 
 for PLATFORM in "${PLATFORMS[@]}"; do
-    docker buildx build $NO_CACHE --platform $PLATFORM -t josiahdc/trailhead:"${TAG}" ./trailhead --push
-    docker buildx build $NO_CACHE --platform $PLATFORM -t josiahdc/switchback:"${TAG}" ./switchback --push
-    docker buildx build $NO_CACHE --platform $PLATFORM -t josiahdc/zenith:"${TAG}" ./zenith --push
-    docker buildx build $NO_CACHE --platform $PLATFORM -t josiahdc/cartographer:"${TAG}" ./cartographer --push --build-arg UNDERHILL_TAG="${TAG}"
-    docker buildx build $NO_CACHE --platform $PLATFORM -t josiahdc/pathfinder:"${TAG}" ./pathfinder --push
+    docker buildx build "$NO_CACHE" --platform "$PLATFORM" -t josiahdc/trailhead:"${TAG}" ./trailhead --push
+    docker buildx build "$NO_CACHE" --platform "$PLATFORM" -t josiahdc/switchback:"${TAG}" ./switchback --push
+    docker buildx build "$NO_CACHE" --platform "$PLATFORM" -t josiahdc/zenith:"${TAG}" ./zenith --push
+    docker buildx build "$NO_CACHE" --platform "$PLATFORM" -t josiahdc/cartographer:"${TAG}" ./cartographer --push --build-arg UNDERHILL_TAG="${TAG}"
+    docker buildx build "$NO_CACHE" --platform "$PLATFORM" -t josiahdc/pathfinder:"${TAG}" ./pathfinder --push
 done
