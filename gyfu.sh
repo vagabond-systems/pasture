@@ -1,8 +1,13 @@
 #!/bin/bash
 
-NO_CACHE=1
+NO_CACHE=true
 
-if [ $NO_CACHE -eq 1 ]; then
+declare -a PLATFORMS=(
+     "linux/amd64"
+     "linux/arm64/v8"
+)
+
+if [ "$NO_CACHE" = true ]; then
     NO_CACHE="--no-cache=true"
     echo "building without cache"
 else
@@ -10,12 +15,14 @@ else
     echo "building with cache"
 fi
 
-TAG=$(<version.txt)
-echo "tag: $TAG"
+{
+    read -r TAG
+} <version.txt
 
-# build image
-docker buildx build $NO_CACHE --platform linux/amd64 -t josiahdc/trailhead:"${TAG}" ./trailhead --push
-docker buildx build $NO_CACHE --platform linux/amd64 -t josiahdc/switchback:"${TAG}" ./switchback --push
-docker buildx build $NO_CACHE --platform linux/amd64 -t josiahdc/zenith:"${TAG}" ./zenith --push
-docker buildx build $NO_CACHE --platform linux/amd64 -t josiahdc/cartographer:"${TAG}" ./cartographer --push --build-arg UNDERHILL_TAG="${TAG}"
-docker buildx build $NO_CACHE --platform linux/amd64 -t josiahdc/pathfinder:"${TAG}" ./pathfinder --push
+for PLATFORM in "${PLATFORMS[@]}"; do
+    docker buildx build $NO_CACHE --platform $PLATFORM -t josiahdc/trailhead:"${TAG}" ./trailhead --push
+    docker buildx build $NO_CACHE --platform $PLATFORM -t josiahdc/switchback:"${TAG}" ./switchback --push
+    docker buildx build $NO_CACHE --platform $PLATFORM -t josiahdc/zenith:"${TAG}" ./zenith --push
+    docker buildx build $NO_CACHE --platform $PLATFORM -t josiahdc/cartographer:"${TAG}" ./cartographer --push --build-arg UNDERHILL_TAG="${TAG}"
+    docker buildx build $NO_CACHE --platform $PLATFORM -t josiahdc/pathfinder:"${TAG}" ./pathfinder --push
+done

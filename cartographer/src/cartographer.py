@@ -9,6 +9,11 @@ import requests
 from loguru import logger
 from psycopg2.extras import RealDictCursor
 
+# set by user
+VPN_USERNAME = os.getenv("VPN_USERNAME")
+VPN_PASSWORD = os.getenv("VPN_PASSWORD")
+
+# added by dockerfile during build
 UNDERHILL_TAG = os.getenv("UNDERHILL_TAG")
 
 IP_CHECK_MAX_ATTEMPTS = 5
@@ -29,7 +34,8 @@ class Trail:
             detach=True,
             privileged=True,
             network=f"underhill-network-{self.port}",
-            dns=["1.1.1.1", "1.0.0.1"]
+            dns=["1.1.1.1", "1.0.0.1"],
+            environment={"VPN_USERNAME": VPN_USERNAME, "VPN_PASSWORD": VPN_PASSWORD}
         )
         self.switchback = self.docker_client.containers.run(
             image=f"josiahdc/switchback:{UNDERHILL_TAG}",

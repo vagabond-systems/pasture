@@ -17,7 +17,6 @@ WORKDIR /app
 # configure openvpn
 RUN apt -y install openvpn openresolv
 COPY ./openvpn/configs /etc/openvpn/configs
-COPY ./openvpn/login.conf /etc/openvpn/
 
 # grab scripts
 COPY ./scripts ./scripts

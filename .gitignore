@@ -1,6 +1,6 @@
 .idea/
 venv/
-zenith/openvpn/login.conf
+creds.txt
 
 # terraform
 deployment/.terraform
