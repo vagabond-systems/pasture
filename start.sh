@@ -7,6 +7,7 @@
     read -r VPN_USERNAME
     read -r VPN_PASSWORD
 } <creds.txt
+docker stop underhill-cartographer
 docker run --rm \
     --name underhill-cartographer \
     -e TRAIL_COUNT=5 \

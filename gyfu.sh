@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NO_CACHE=true
+NO_CACHE=false
 
 declare -a PLATFORMS=(
      "linux/amd64"

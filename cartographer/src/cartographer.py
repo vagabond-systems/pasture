@@ -56,13 +56,16 @@ class Trail:
     def register(self, atlas):
         query = """
             INSERT INTO trail (port, demerits, created_at)
-            VALUES (%(port)s, 0, now());
+            VALUES (%(port)s, 0, now())
+            RETURNING trail_id;
         """
         parameters = {
             "port": self.port
         }
         atlas.cursor.execute(query, vars=parameters)
+        trail_id = atlas.cursor.fetchone()["trail_id"]
         atlas.connection.commit()
+        return trail_id
 
     def is_operational(self):
         attempts = 0
@@ -90,10 +93,10 @@ class Trail:
         return unproxied_ip, proxied_ip
 
     def destroy(self):
-        self.network.remove()
         self.trailhead.remove(force=True)
         self.switchback.remove(force=True)
         self.zenith.remove(force=True)
+        self.network.remove()
         logger.info("destroyed trail", extra={"port": self.port})
 
 
@@ -168,6 +171,7 @@ class Cartographer:
         )
         self.atlas = Atlas(self.docker_client)
         self.pathfinder = Pathfinder(self.docker_client)
+        self.trails = {}
         logger.info("(*) initialized cartographer", extra={"max_connections": max_connections})
 
     def __enter__(self):
@@ -195,13 +199,12 @@ class Cartographer:
         trail = Trail(self.docker_client, port)
         logger.info("testing trail", extra={"port": port})
         if trail.is_operational():
-            trail.register(self.atlas)
+            trail_id = trail.register(self.atlas)
+            self.trails[trail_id] = trail
             logger.info("(*) created trail", extra={"port": port})
-            return trail
         else:
             logger.error("(!) trail creation failed", extra={"port": port})
             trail.destroy()
-            return None
 
     def tend_trails(self):
         logger.info("tending trails")
@@ -211,14 +214,16 @@ class Cartographer:
         # if a port is expected by the atlas, but not established in docker, create a trail
         for port in expected_ports:
             if port not in established_ports:
+                logger.error(f"atlas expects a trail, but none exists on port: {port}")
                 self.build_trail(port)
+
+        self.destroy_demerited_trails()
 
         # add new trails on empty ports:
         for port in self.available_ports:
             if port not in expected_ports:
+                logger.info(f"found available port: {port}")
                 self.build_trail(port)
-
-        self.destroy_demerited_trails()
 
     def collect_expected_ports(self):
         query = """
@@ -241,6 +246,7 @@ class Cartographer:
                 port = port_match.group(1)
                 # if a container exists on an unexpected port, destroy it
                 if port not in expected_ports:
+                    logger.error(f"removing unexpected container: {container.name}")
                     container.remove(force=True)
                 else:
                     established_ports.append(port)
@@ -250,13 +256,14 @@ class Cartographer:
             if port_match := re.match(r"^underhill-.*-(\d+)$", network.name):
                 port = port_match.group(1)
                 if port not in expected_ports:
+                    logger.error(f"removing unexpected network: {network.name}")
                     network.remove()
         deduplicated_result = list(set(established_ports))
         return deduplicated_result
 
     def destroy_demerited_trails(self):
         query = """
-            SELECT trail.trail_id
+            SELECT trail.trail_id, trail.port
             FROM trail
                  LEFT JOIN public.expedition on trail.trail_id = expedition.trail_id
             WHERE demerits > 0
@@ -264,14 +271,18 @@ class Cartographer:
             HAVING count(expedition.expedition_id) < 1
         """
         self.atlas.cursor.execute(query)
-        trail_data = self.atlas.cursor.fetchone()
-        trail_id = trail_data["trail_id"]
-        query = """
-            DELETE FROM trail
-            WHERE trail_id = %(trail_id)s
-        """
-        parameters = {
-            "trail_id": trail_id
-        }
-        self.atlas.cursor.execute(query, vars=parameters)
-        self.atlas.connection.commit()
+        trails = self.atlas.cursor.fetchall()
+        for trail in trails:
+            trail_id = trail["trail_id"]
+            port = trail["port"]
+            logger.info(f"destroying demerited trail: {trail_id} on port {port}")
+            query = """
+                DELETE FROM trail
+                WHERE trail_id = %(trail_id)s
+            """
+            parameters = {
+                "trail_id": trail_id
+            }
+            self.atlas.cursor.execute(query, vars=parameters)
+            self.atlas.connection.commit()
+            self.trails[trail_id].destroy()
