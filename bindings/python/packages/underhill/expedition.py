@@ -15,7 +15,11 @@ class Expedition:
 
         # prepare session object
         self.session = requests.Session()
-        self.session.headers.update({"user-agent": generate_user_agent()})
+        self.session.headers.update({"user-agent": generate_user_agent(
+            os=["win", "mac", "linux"],
+            navigator=["chrome", "firefox"],
+            device_type=["desktop"]
+        )})
         self.proxy_settings = {
             "http": f"http://{underhill_host}:{self.port}",
             "https": f"http://{underhill_host}:{self.port}"

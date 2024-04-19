@@ -12,7 +12,7 @@ test_requirements = [
 setup(
     name="underhill",
     description="You draw far too much attention to yourself, Mr. Underhill.",
-    version="0.3",
+    version="0.4",
     url="https://github.com/vagabond-systems/underhill",
     author="(~)",
     package_dir={"": "packages"},
