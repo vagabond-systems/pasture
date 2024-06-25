@@ -1,11 +1,23 @@
 import os
 from time import sleep
 
+from loguru import logger
+
 from cartographer import Cartographer
 
 TRAIL_COUNT = int(os.getenv("TRAIL_COUNT"))
 
-with Cartographer(TRAIL_COUNT) as cartographer:
+
+def main():
+    with Cartographer(TRAIL_COUNT) as cartographer:
+        while True:
+            cartographer.tend_trails()
+            sleep(1)
+
+
+if __name__ == '__main__':
     while True:
-        cartographer.tend_trails()
-        sleep(1)
+        try:
+            main()
+        except Exception as error:
+            logger.info("Cartographer crashed, restarting", extra={"error": str(error)})

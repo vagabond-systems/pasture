@@ -80,6 +80,8 @@ class Trail:
                     return True
             except Exception as error:
                 logger.warning("ip check failed", extra={"port": self.port, "error_str": str(error)})
+            finally:
+                attempts += 1
         return False
 
     def ip_check(self):
