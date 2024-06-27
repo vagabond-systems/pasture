@@ -2,9 +2,10 @@
 
 NO_CACHE=false
 
+# last one ends up on dockerhub
 declare -a PLATFORMS=(
     "linux/amd64"
-    "linux/arm64/v8"
+#    "linux/arm64/v8"
 )
 for PLATFORM in "${PLATFORMS[@]}"; do
     BUILD_OPTIONS="--platform $PLATFORM --push"
