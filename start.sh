@@ -7,8 +7,8 @@
     read -r VPN_USERNAME
     read -r VPN_PASSWORD
 } <creds.txt
-docker stop underhill-cartographer > /dev/null
-docker rm underhill-cartographer > /dev/null
+docker stop underhill-cartographer > /dev/null 2>&1
+docker rm underhill-cartographer > /dev/null 2>&1
 docker run \
     --restart always \
     -d \

@@ -20,4 +20,4 @@ if __name__ == '__main__':
         try:
             main()
         except Exception as error:
-            logger.info("Cartographer crashed, restarting", extra={"error": str(error)})
+            logger.info(f"Cartographer crashed, restarting: {str(error)}")
