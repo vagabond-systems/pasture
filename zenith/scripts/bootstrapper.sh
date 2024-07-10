@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RANDOM_CONFIG_PATH=$(find /etc/openvpn/configs/ -type f -regex ".*\.ovpn$" | shuf -n 1)
+RANDOM_CONFIG_PATH=$(find /etc/openvpn/configs/nord -type f -regex ".*\.ovpn$" | shuf -n 1)
 echo "$RANDOM_CONFIG_PATH"
 
 # set up auth
