@@ -10,3 +10,10 @@ deployment/.terraform.lock.hcl
 deployment/terraform.tfstate
 deployment/terraform.tfstate.backup
 deployment/src.zip
+
+# caches and such
+.DS_Store
+**/.DS_Store
+__pycache__
+**/__pycache__
+
