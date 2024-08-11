@@ -1,9 +1,0 @@
-setup.py
-packages/underhill/__init__.py
-packages/underhill/expedition.py
-packages/underhill.egg-info/PKG-INFO
-packages/underhill.egg-info/SOURCES.txt
-packages/underhill.egg-info/dependency_links.txt
-packages/underhill.egg-info/requires.txt
-packages/underhill.egg-info/top_level.txt
-test/test_expedition.py

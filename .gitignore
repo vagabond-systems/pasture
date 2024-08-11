@@ -1,15 +1,6 @@
 .idea/
 venv/
-creds.txt
-pia-creds.txt
-mul-creds.txt
-
-# terraform
-deployment/.terraform
-deployment/.terraform.lock.hcl
-deployment/terraform.tfstate
-deployment/terraform.tfstate.backup
-deployment/src.zip
+.venv/
 
 # caches and such
 .DS_Store

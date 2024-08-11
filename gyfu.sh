@@ -1,28 +1,27 @@
 #!/bin/bash
 
-NO_CACHE=false
+{
+    read -r TAG
+} <version.txt
+
+NO_CACHE="false"
+PUSH=""
+#PUSH="--push"
 
 # last one ends up on dockerhub
 declare -a PLATFORMS=(
-    "linux/amd64"
-#    "linux/arm64/v8"
+    "linux/arm64/v8"
+    #    "linux/amd64"
 )
 for PLATFORM in "${PLATFORMS[@]}"; do
-    BUILD_OPTIONS="--platform $PLATFORM --push"
+    BUILD_OPTIONS="--platform $PLATFORM $PUSH"
     if [ "$NO_CACHE" = true ]; then
         BUILD_OPTIONS+=" --no-cache=true"
         echo "building without cache"
     else
         echo "building with cache"
     fi
-
-    {
-        read -r TAG
-    } <version.txt
-
-    docker buildx build $BUILD_OPTIONS -t josiahdc/trailhead:"${TAG}" ./trailhead
-    docker buildx build $BUILD_OPTIONS -t josiahdc/switchback:"${TAG}" ./switchback
-    docker buildx build $BUILD_OPTIONS -t josiahdc/zenith:"${TAG}" ./zenith
-    docker buildx build $BUILD_OPTIONS -t josiahdc/cartographer:"${TAG}" --build-arg UNDERHILL_TAG="${TAG}" ./cartographer
-    docker buildx build $BUILD_OPTIONS -t josiahdc/pathfinder:"${TAG}" ./pathfinder
+    docker buildx build $BUILD_OPTIONS -t josiahdc/shepherd:"${TAG}" ./shepherd
+    docker buildx build $BUILD_OPTIONS -t josiahdc/polygon:"${TAG}" ./polygon
+    docker buildx build $BUILD_OPTIONS -t josiahdc/liaison:"${TAG}" ./liaison
 done
