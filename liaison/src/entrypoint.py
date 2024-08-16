@@ -45,9 +45,9 @@ class Ledger:
         self.connection.close()
 
 
-@app.route("/grow_herd", methods=["POST"])
-def grow_herd():
-    app.logger.info("received request to grow herd")
+@app.route("/grow_flock", methods=["POST"])
+def grow_flock():
+    app.logger.info("received request to grow flock")
     with Ledger() as ledger:
         port = create_flockmate(ledger)
         return {"port": port}, 200

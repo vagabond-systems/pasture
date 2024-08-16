@@ -13,27 +13,26 @@ class Vertex:
         )
         self.chat = self.model.start_chat()
 
-    def chat_message(self, prompt, file_urls, temperature, requested_tools):
+    def chat_message(self, prompt, pdf_blobs, temperature, requested_tools):
         self.logger.info(f"Vertex agent received generate request")
         active_tools = []
         if "google_search" in requested_tools:
             active_tools.append(Tool.from_google_search_retrieval(grounding.GoogleSearchRetrieval()))
         prompt_parts = [prompt]
-        for file_url in file_urls:
-            pdf_file = Part.from_uri(file_url, mime_type="application/pdf")
-            prompt_parts.append(pdf_file)
+        for pdf in pdf_blobs:
+            pdf_part = Part.from_data(pdf, mime_type="application/pdf")
+            prompt_parts.append(pdf_part)
         stream = self.chat.send_message(
             prompt_parts,
             generation_config=GenerationConfig(
-                temperature=temperature,
-            ),
+                temperature=temperature),
             tools=active_tools,
             stream=True)
-        response_text_chunks = []
+        result_chunks = []
         for chunk in stream:
             try:
-                response_text_chunks.append(chunk.text)
+                result_chunks.append(chunk.text)
             except Exception as error:
                 break
-        response_text = "".join(response_text_chunks)
-        return response_text
+        result = "".join(result_chunks)
+        return result

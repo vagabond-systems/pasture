@@ -38,10 +38,11 @@ class Ledger:
             network="pasture",
             environment={"POSTGRES_USER": user, "POSTGRES_PASSWORD": password, "POSTGRES_DB": database}
         )
+        logger.info("waiting for ledger to boot...")
         while "database system is ready to accept connections" not in str(self.ledger_container.logs()):
-            logger.info("waiting for ledger to boot...")
             time.sleep(0.2)
         time.sleep(2)
+        logger.info("ledger booted successfully")
         logger.info("acquiring psycopg connection")
         self.connection = psycopg2.connect(host=host, port=port, dbname=database, user=user, password=password)
         self.cursor = self.connection.cursor(cursor_factory=RealDictCursor)
@@ -173,7 +174,7 @@ class Shepherd:
             port = flockmate["port"]
             flockmate_id = flockmate["flockmate_id"]
             logger.info(f"creating requested flockmate: {flockmate_id} on port: {port}")
-            self.docker_client.containers.run(
+            flockmate_container = self.docker_client.containers.run(
                 image=f"{FLOCKMATE_IMAGE}:{VERSION_TAG}",
                 name=f"pasture-flockmate-{port}",
                 ports={f"23000/tcp": port},
@@ -182,6 +183,10 @@ class Shepherd:
                 remove=True,
                 volumes={CREDS_DIRECTORY: {"bind": "/creds", "mode": "ro"}},
                 environment=FLOCKMATE_ENVIRONMENT)
+            logger.info(f"( ) waiting for flockmate {flockmate_id} to boot on port: {port}")
+            while "ready for requests!" not in str(flockmate_container.logs()):
+                time.sleep(0.2)
+            logger.info(f"(*) successfully booted flockmate {flockmate_id} on port: {port}")
             self.register_flockmate(flockmate_id)
 
     def register_flockmate(self, flockmate_id):

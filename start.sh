@@ -8,7 +8,6 @@ MAX_FLOCK_SIZE="5"
 FLOCKMATE_IMAGE="josiahdc/polygon"
 CREDS_DIRECTORY="$HOME/vagabond/secrets/pasture_test"
 FLOCKMATE_ENVIRONMENT='{
-    "BUCKET_NAME": "vagabond-pasture-test",
     "GCP_LOCATION": "us-east4",
     "MODEL_NAME": "gemini-1.5-pro-001",
     "PROJECT": "vagabondsystems",
@@ -17,6 +16,7 @@ FLOCKMATE_ENVIRONMENT='{
 
 docker stop pasture-shepherd >/dev/null 2>&1
 docker rm pasture-shepherd >/dev/null 2>&1
+docker pull josiahdc/shepherd:"$TAG"
 docker run \
     --restart always \
     -d \

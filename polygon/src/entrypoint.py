@@ -1,3 +1,5 @@
+import base64
+import json
 import logging
 import os
 
@@ -13,8 +15,6 @@ if __name__ == "entrypoint":
     app.logger.setLevel(gunicorn_logger.level)
 app.logger.setLevel(logging.INFO)
 
-BUCKET_NAME = os.getenv("BUCKET_NAME")
-app.logger.info(f"using bucket name from env var: {BUCKET_NAME}")
 PROJECT = os.getenv("PROJECT")
 app.logger.info(f"using project from env var: {PROJECT}")
 GCP_LOCATION = os.getenv("GCP_LOCATION")
@@ -28,12 +28,15 @@ app.logger.info(f"vertex agent created, ready for requests!")
 @app.route("/chat", methods=["POST"])
 def chat():
     app.logger.info("running inference")
-    payload = request.json
+    raw_payload = request.files.get("payload")
+    payload = json.loads(raw_payload.read())
     prompt = payload["prompt"]
-    selected_files = payload["selected_files"]
     temperature = payload["temperature"]
     tools = payload["tools"]
-    file_urls = [f"gs://{BUCKET_NAME}/{file_name}" for file_name in selected_files]
-    response = vertex.chat_message(prompt, file_urls, temperature, tools)
+    pdfs = []
+    for form_field_name, file in request.files.items():
+        if form_field_name != "payload":
+            pdfs.append(base64.b64encode(file.read()).decode("utf-8"))
+    result = vertex.chat_message(prompt, pdfs, temperature, tools)
     app.logger.info("finished running inference")
-    return {"response": response}, 200
+    return {"result": result}, 200
