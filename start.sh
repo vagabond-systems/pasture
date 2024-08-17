@@ -17,6 +17,8 @@ FLOCKMATE_ENVIRONMENT='{
 docker stop pasture-shepherd >/dev/null 2>&1
 docker rm pasture-shepherd >/dev/null 2>&1
 docker pull josiahdc/shepherd:"$TAG"
+docker pull josiahdc/liaison:"$TAG"
+docker pull josiahdc/polygon:"$TAG"
 docker run \
     --restart always \
     -d \
