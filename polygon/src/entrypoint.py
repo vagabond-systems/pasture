@@ -33,10 +33,12 @@ def chat():
     prompt = payload["prompt"]
     temperature = payload["temperature"]
     tools = payload["tools"]
-    pdfs = []
+    mimetype_blob_tuples = []
     for form_field_name, file in request.files.items():
-        if form_field_name != "payload":
-            pdfs.append(base64.b64encode(file.read()).decode("utf-8"))
-    result = vertex.chat_message(prompt, pdfs, temperature, tools)
+        if form_field_name == "file":
+            blob = base64.b64encode(file.read()).decode("utf-8")
+            mimetype = file.mimetype
+            mimetype_blob_tuples.append((mimetype, blob))
+    result = vertex.chat_message(prompt, temperature, tools, mimetype_blob_tuples)
     app.logger.info("finished running inference")
     return {"result": result}, 200

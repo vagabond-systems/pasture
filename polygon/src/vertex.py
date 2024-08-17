@@ -13,15 +13,15 @@ class Vertex:
         )
         self.chat = self.model.start_chat()
 
-    def chat_message(self, prompt, pdf_blobs, temperature, requested_tools):
+    def chat_message(self, prompt, temperature, requested_tools, mimetype_blob_tuples):
         self.logger.info(f"Vertex agent received generate request")
         active_tools = []
         if "google_search" in requested_tools:
             active_tools.append(Tool.from_google_search_retrieval(grounding.GoogleSearchRetrieval()))
         prompt_parts = [prompt]
-        for pdf in pdf_blobs:
-            pdf_part = Part.from_data(pdf, mime_type="application/pdf")
-            prompt_parts.append(pdf_part)
+        for mimetype, blob in mimetype_blob_tuples:
+            data_part = Part.from_data(blob, mime_type=mimetype)
+            prompt_parts.append(data_part)
         stream = self.chat.send_message(
             prompt_parts,
             generation_config=GenerationConfig(
