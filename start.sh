@@ -8,7 +8,7 @@ MAX_FLOCK_SIZE="5"
 FLOCKMATE_IMAGE="josiahdc/polygon"
 CREDS_DIRECTORY="$HOME/vagabond/secrets/pasture_test"
 FLOCKMATE_ENVIRONMENT='{
-    "GCP_LOCATION": "us-east4",
+    "GCP_LOCATION": "us-west1",
     "MODEL_NAME": "gemini-1.5-pro-001",
     "PROJECT": "vagabondsystems",
     "GOOGLE_APPLICATION_CREDENTIALS": "/creds/key.json"
