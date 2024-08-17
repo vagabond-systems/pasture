@@ -18,22 +18,21 @@ class PolygonChat:
         else:
             self.port = port
 
-    def chat(self, prompt, temperature=1.0, tools=None, file_paths=None):
+    def chat(self, prompt, temperature=1.0, tools=None, file_tuples=None):
         if tools is None:
             tools = []
-        if file_paths is None:
-            file_paths = []
+        if file_tuples is None:
+            file_tuples = []
         payload = {
             "prompt": prompt,
             "temperature": temperature,
             "tools": tools
         }
         files = [("payload", ("payload.json", json.dumps(payload), "application/json"))]
-        for file_path in file_paths:
-            file_name = os.path.basename(file_path)
-            file_extension = os.path.splitext(file_path)[1]
+        for file_name, file_stream in file_tuples:
+            file_extension = os.path.splitext(file_name)[1]
             mimetype = mimetypes.types_map[file_extension]
-            files.append(("file", (file_name, open(file_path, "rb"), mimetype)))
+            files.append(("file", (file_name, file_stream, mimetype)))
         response = requests.post(f"http://{self.host}:{self.port}/chat", files=files)
         if response.status_code == 200:
             return response.json()["result"]

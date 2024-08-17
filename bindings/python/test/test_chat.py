@@ -33,7 +33,9 @@ def test_polygon_tools():
 def test_polygon_pdf():
     session = PolygonChat(HOST)
     prompt = "Please provide a summary of this document."
-    result = session.chat(prompt, file_paths=["./data/pico_sdk.pdf"])
+    with open("./data/pico_sdk.pdf", "rb") as file_stream:
+        file_tuples = ("pico_sdk.pdf", file_stream)
+        result = session.chat(prompt, file_tuples=[file_tuples])
     print_chat(prompt, result)
 
     prompt = "What is this document's copyright?"
@@ -44,7 +46,9 @@ def test_polygon_pdf():
 def test_polygon_image():
     session = PolygonChat(HOST)
     prompt = "Describe this image in flowery verse."
-    result = session.chat(prompt, temperature=2.0, file_paths=["./data/awe.jpg"])
+    with open("./data/awe.jpg", "rb") as file_stream:
+        file_tuples = ("awe.jpg", file_stream)
+        result = session.chat(prompt, file_tuples=[file_tuples])
     print_chat(prompt, result)
 
 
