@@ -11,7 +11,7 @@ test_requirements = [
 setup(
     name="flockmate",
     description="tend your flock",
-    version="0.6",
+    version="0.7",
     url="https://github.com/vagabond-systems/pasture",
     author="(~)",
     package_dir={"": "packages"},

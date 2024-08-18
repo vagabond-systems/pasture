@@ -52,6 +52,34 @@ def test_polygon_image():
     print_chat(prompt, result)
 
 
+def test_response_schema():
+    session = PolygonChat(HOST)
+    prompt = "Come up with some colors for my basket."
+    response_schema = {
+        "title": "Basket",
+        "type": "object",
+        "properties": {
+            "blue_ones": {
+                "title": "red_ones",
+                "type": "integer"
+            },
+            "red_ones": {
+                "title": "green_ones",
+                "type": "integer"
+            },
+            "yellow_ones": {
+                "title": "blue_ones",
+                "type": "integer"
+            }
+        },
+        "required": [
+            "red_ones", "green_ones", "blue_ones"
+        ]
+    }
+    result = session.chat(prompt, response_schema=response_schema)
+    print_chat(prompt, result)
+
+
 def test_chat_session_separation():
     print("first session:")
     first_session = PolygonChat(HOST)

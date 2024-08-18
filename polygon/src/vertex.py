@@ -13,7 +13,7 @@ class Vertex:
         )
         self.chat = self.model.start_chat()
 
-    def chat_message(self, prompt, temperature, requested_tools, mimetype_blob_tuples):
+    def chat_message(self, prompt, temperature, requested_tools, mimetype_blob_tuples, response_schema):
         self.logger.info(f"Vertex agent received generate request")
         active_tools = []
         if "google_search" in requested_tools:
@@ -22,10 +22,18 @@ class Vertex:
         for mimetype, blob in mimetype_blob_tuples:
             data_part = Part.from_data(blob, mime_type=mimetype)
             prompt_parts.append(data_part)
+        if response_schema is None:
+            generation_config = GenerationConfig(
+                temperature=temperature)
+        else:
+            generation_config = GenerationConfig(
+                temperature=temperature,
+                response_mime_type="application/json",
+                response_schema=response_schema
+            )
         stream = self.chat.send_message(
             prompt_parts,
-            generation_config=GenerationConfig(
-                temperature=temperature),
+            generation_config=generation_config,
             tools=active_tools,
             stream=True)
         result_chunks = []

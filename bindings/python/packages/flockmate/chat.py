@@ -18,7 +18,7 @@ class PolygonChat:
         else:
             self.port = port
 
-    def chat(self, prompt, temperature=1.0, tools=None, file_tuples=None):
+    def chat(self, prompt, temperature=1.0, tools=None, file_tuples=None, response_schema=None):
         if tools is None:
             tools = []
         if file_tuples is None:
@@ -28,6 +28,8 @@ class PolygonChat:
             "temperature": temperature,
             "tools": tools
         }
+        if response_schema is not None:
+            payload["response_schema"] = response_schema
         files = [("payload", ("payload.json", json.dumps(payload), "application/json"))]
         for file_name, file_stream in file_tuples:
             file_extension = os.path.splitext(file_name)[1]
