@@ -1,7 +1,3 @@
-import json
-import mimetypes
-import os
-
 import requests
 
 
@@ -18,24 +14,19 @@ class PolygonChat:
         else:
             self.port = port
 
-    def chat(self, prompt, temperature=1.0, tools=None, file_tuples=None, response_schema=None):
-        if tools is None:
-            tools = []
-        if file_tuples is None:
-            file_tuples = []
+    def chat(self, prompt, temperature=None, tools=None, file_uris=None, response_schema=None):
         payload = {
-            "prompt": prompt,
-            "temperature": temperature,
-            "tools": tools
+            "prompt": prompt
         }
+        if temperature is not None:
+            payload["temperature"] = temperature
+        if tools is not None:
+            payload["tools"] = tools
+        if file_uris is not None:
+            payload["file_uris"] = file_uris
         if response_schema is not None:
             payload["response_schema"] = response_schema
-        files = [("payload", ("payload.json", json.dumps(payload), "application/json"))]
-        for file_name, file_stream in file_tuples:
-            file_extension = os.path.splitext(file_name)[1]
-            mimetype = mimetypes.types_map[file_extension]
-            files.append(("file", (file_name, file_stream, mimetype)))
-        response = requests.post(f"http://{self.host}:{self.port}/chat", files=files)
+        response = requests.post(f"http://{self.host}:{self.port}/chat", json=payload)
         if response.status_code == 200:
             return response.json()["result"]
         else:

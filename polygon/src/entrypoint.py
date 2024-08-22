@@ -1,5 +1,3 @@
-import base64
-import json
 import logging
 import os
 
@@ -28,18 +26,16 @@ app.logger.info(f"vertex agent created, ready for requests!")
 @app.route("/chat", methods=["POST"])
 def chat():
     app.logger.info("running inference")
-    raw_payload = request.files.get("payload")
-    payload = json.loads(raw_payload.read())
+    payload = request.json
     prompt = payload["prompt"]
-    temperature = payload["temperature"]
-    tools = payload["tools"]
+    temperature = payload.get("temperature", 1.0)
+    tools = payload.get("tools", None)
+    file_uris = payload.get("file_uris", None)
     response_schema = payload.get("response_schema", None)
-    mimetype_blob_tuples = []
-    for form_field_name, file in request.files.items():
-        if form_field_name == "file":
-            blob = base64.b64encode(file.read()).decode("utf-8")
-            mimetype = file.mimetype
-            mimetype_blob_tuples.append((mimetype, blob))
-    result = vertex.chat_message(prompt, temperature, tools, mimetype_blob_tuples, response_schema)
+    result = vertex.chat_message(prompt,
+                                 temperature=temperature,
+                                 tools=tools,
+                                 file_uris=file_uris,
+                                 response_schema=response_schema)
     app.logger.info("finished running inference")
     return {"result": result}, 200

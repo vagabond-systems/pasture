@@ -1,3 +1,6 @@
+import mimetypes
+import os
+
 import vertexai
 from vertexai.generative_models import GenerativeModel, Part, GenerationConfig, Tool, grounding
 
@@ -13,15 +16,22 @@ class Vertex:
         )
         self.chat = self.model.start_chat()
 
-    def chat_message(self, prompt, temperature, requested_tools, mimetype_blob_tuples, response_schema):
+    def chat_message(self, prompt, temperature=1.0, tools=None, file_uris=None, response_schema=None):
         self.logger.info(f"Vertex agent received generate request")
-        active_tools = []
-        if "google_search" in requested_tools:
-            active_tools.append(Tool.from_google_search_retrieval(grounding.GoogleSearchRetrieval()))
         prompt_parts = [prompt]
-        for mimetype, blob in mimetype_blob_tuples:
-            data_part = Part.from_data(blob, mime_type=mimetype)
-            prompt_parts.append(data_part)
+
+        active_tools = []
+        if tools is not None:
+            if "google_search" in tools:
+                active_tools.append(Tool.from_google_search_retrieval(grounding.GoogleSearchRetrieval()))
+
+        if file_uris is not None:
+            for file_uri in file_uris:
+                file_extension = os.path.splitext(file_uri)[1].lower()
+                mimetype = mimetypes.types_map[file_extension]
+                data_part = Part.from_uri(file_uri, mime_type=mimetype)
+                prompt_parts.append(data_part)
+
         if response_schema is None:
             generation_config = GenerationConfig(
                 temperature=temperature)
@@ -31,6 +41,7 @@ class Vertex:
                 response_mime_type="application/json",
                 response_schema=response_schema
             )
+
         stream = self.chat.send_message(
             prompt_parts,
             generation_config=generation_config,
