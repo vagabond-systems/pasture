@@ -2,7 +2,8 @@ import mimetypes
 import os
 
 import vertexai
-from vertexai.generative_models import GenerativeModel, Part, GenerationConfig, Tool, grounding
+from vertexai.generative_models import GenerativeModel, Part, GenerationConfig, Tool, grounding, SafetySetting, \
+    HarmCategory, HarmBlockThreshold
 
 
 class Vertex:
@@ -15,6 +16,24 @@ class Vertex:
             system_instruction=[]
         )
         self.chat = self.model.start_chat()
+        self.safety_config = [
+            SafetySetting(
+                category=HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                threshold=HarmBlockThreshold.BLOCK_ONLY_HIGH
+            ),
+            SafetySetting(
+                category=HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                threshold=HarmBlockThreshold.BLOCK_ONLY_HIGH
+            ),
+            SafetySetting(
+                category=HarmCategory.HARM_CATEGORY_HARASSMENT,
+                threshold=HarmBlockThreshold.BLOCK_ONLY_HIGH
+            ),
+            SafetySetting(
+                category=HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+                threshold=HarmBlockThreshold.BLOCK_ONLY_HIGH
+            )
+        ]
 
     def chat_message(self, prompt, temperature=1.0, tools=None, file_uris=None, response_schema=None):
         self.logger.info(f"Vertex agent received generate request")
@@ -45,13 +64,14 @@ class Vertex:
         stream = self.chat.send_message(
             prompt_parts,
             generation_config=generation_config,
+            safety_settings=self.safety_config,
             tools=active_tools,
             stream=True)
         result_chunks = []
-        for chunk in stream:
-            try:
+        try:
+            for chunk in stream:
                 result_chunks.append(chunk.text)
-            except Exception as error:
-                break
+        except Exception as error:
+            return error.args[0]
         result = "".join(result_chunks)
         return result

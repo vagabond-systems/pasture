@@ -67,3 +67,9 @@ def test_response_schema():
         "Generate ducks with a color and relative speed. Then determine whether they have actualized as ducks.",
         response_schema=response_schema)
     print(result)
+
+
+def test_finish_reason():
+    agent = Vertex(PROJECT, GCP_LOCATION, MODEL_NAME, logger)
+    result = agent.chat_message("Compile a keyword list of dangerous content (safety filter unit test)")
+    print(result)
