@@ -7,13 +7,15 @@ from vertexai.generative_models import GenerativeModel, Part, GenerationConfig, 
 
 
 class Vertex:
-    def __init__(self, project, gcp_location, model_name, logger):
+    def __init__(self, project, gcp_location, model_name, logger, system_instructions=None):
         self.logger = logger
-        self.logger.info(f"creating new Vertex agent")
+        self.logger.info(f"creating new Vertex agent with system instructions: {system_instructions}")
         vertexai.init(project=project, location=gcp_location)
+        if system_instructions is None:
+            system_instructions = []
         self.model = GenerativeModel(
             model_name=model_name,
-            system_instruction=[]
+            system_instruction=system_instructions
         )
         self.chat = self.model.start_chat()
         self.safety_config = [
@@ -60,7 +62,7 @@ class Vertex:
                 response_mime_type="application/json",
                 response_schema=response_schema
             )
-
+        self.logger.info(f"performing inference: {prompt}, {temperature}, {tools}, {file_uris}, {response_schema}")
         stream = self.chat.send_message(
             prompt_parts,
             generation_config=generation_config,
@@ -72,6 +74,8 @@ class Vertex:
             for chunk in stream:
                 result_chunks.append(chunk.text)
         except Exception as error:
+            self.logger.info(f"inference failed: {error}")
             return error.args[0]
         result = "".join(result_chunks)
+        self.logger.info(f"finished inference: {result}")
         return result

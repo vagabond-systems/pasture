@@ -2,11 +2,14 @@ import requests
 
 
 class PolygonChat:
-    def __init__(self, host, port=None):
+    def __init__(self, host, port=None, system_instructions=None):
         # if port is none, start a new chat, otherwise continue chat on that port
         self.host = host
         if port is None:
-            response = requests.post(f"http://{self.host}:23023/grow_flock")
+            payload = {
+                "system_instructions": system_instructions
+            }
+            response = requests.post(f"http://{self.host}:23023/grow_flock", json=payload)
             if response.status_code == 200:
                 self.port = response.json()["port"]
             else:

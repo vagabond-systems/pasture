@@ -4,7 +4,8 @@ from random import choice
 from time import sleep
 
 import psycopg2
-from flask import Flask
+import requests
+from flask import Flask, request
 from psycopg2.extras import RealDictCursor
 
 app = Flask(__name__)
@@ -48,8 +49,14 @@ class Ledger:
 @app.route("/grow_flock", methods=["POST"])
 def grow_flock():
     app.logger.info("received request to grow flock")
+    payload = request.json
+    system_instructions = payload.get("system_instructions", None)
     with Ledger() as ledger:
         port = create_flockmate(ledger)
+        agent_initialization_payload = {
+            "system_instructions": system_instructions
+        }
+        requests.post(f"http://pasture-flockmate-{port}:23000/initialize", json=agent_initialization_payload)
         return {"port": port}, 200
 
 

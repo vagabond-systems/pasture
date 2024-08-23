@@ -69,7 +69,7 @@ def test_response_schema():
     print(result)
 
 
-def test_finish_reason():
+def test_safety_checker():
     agent = Vertex(PROJECT, GCP_LOCATION, MODEL_NAME, logger)
     result = agent.chat_message("Compile a keyword list of dangerous content (safety filter unit test)")
     print(result)

@@ -100,3 +100,18 @@ def test_chat_session_separation():
     prompt = "How many pears am I holding?"
     result = second_session_rejoin.chat(prompt)
     print_chat(prompt, result)
+
+
+def test_system_instructions():
+    system_instructions = [
+        "You just can't stop thinking about macarons. You want everyone to know how good they are.",
+        "You often forget what you were talking about, and start talking about macarons instead."
+    ]
+    session = PolygonChat(HOST, system_instructions=system_instructions)
+    prompt = "Start counting sheep"
+    result = session.chat(prompt)
+    print_chat(prompt, result)
+
+    prompt = "Keep counting sheep"
+    result = session.chat(prompt)
+    print_chat(prompt, result)

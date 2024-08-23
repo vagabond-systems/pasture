@@ -19,8 +19,18 @@ GCP_LOCATION = os.getenv("GCP_LOCATION")
 app.logger.info(f"using gcp location from env var: {GCP_LOCATION}")
 MODEL_NAME = os.getenv("MODEL_NAME")
 app.logger.info(f"using model name from env var: {MODEL_NAME}")
-vertex = Vertex(PROJECT, GCP_LOCATION, MODEL_NAME, app.logger)
-app.logger.info(f"vertex agent created, ready for requests!")
+vertex = None
+app.logger.info(f"polygon booted, ready for requests!")
+
+
+@app.route("/initialize", methods=["POST"])
+def initialize():
+    payload = request.json
+    system_instructions = payload.get("system_instructions", None)
+    global vertex
+    vertex = Vertex(PROJECT, GCP_LOCATION, MODEL_NAME, app.logger, system_instructions)
+    app.logger.info(f"vertex agent initialized, ready for inference!")
+    return {}, 200
 
 
 @app.route("/chat", methods=["POST"])
